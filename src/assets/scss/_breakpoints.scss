@@ -1,0 +1,157 @@
+// Reference from https://css-tricks.com/snippets/sass/mixin-manage-breakpoints/
+// Reference from https://github.com/twbs/bootstrap/blob/main/scss/mixins/_breakpoints.scss
+
+$breakpoints: (
+  "small": (
+    min-width: 767px,
+  ),
+  "medium": (
+    min-width: 992px,
+  ),
+  "large": (
+    min-width: 1200px,
+  ),
+  "xs": (
+    min-width: 300px,
+  ),
+  "sm": (
+    min-width: 576px,
+  ),
+  "md": (
+    min-width: 767px,
+  ),
+  "lg": (
+    min-width: 992px,
+  ),
+  "xl": (
+    min-width: 1100px,
+  ),
+  "xxl": (
+    min-width: 1300px,
+  ),
+  "xxlg": (
+    min-width: 1600px,
+  ),
+) !default;
+
+$breakpoint-values: (
+  xs: 300px,
+  sm: 576px,
+  md: 767px,
+  lg: 992px,
+  xl: 1100px,
+  xxl: 1300px,
+  xxlg: 1600px,
+) !default;
+
+/// Mixin to manage responsive breakpoints
+/// @author Kitty Giraudel
+/// @param {String} $breakpoint - Breakpoint name. Provided when function is called.
+/// @require $breakpoints
+@mixin respond-to($breakpoint) {
+  // If the key exists in the map
+  @if map-has-key($breakpoints, $breakpoint) {
+    // Prints a media query based on the value
+    @media #{inspect(map-get($breakpoints, $breakpoint))} {
+      @content;
+    }
+  }
+
+  // If the key doesn't exist in the map
+  @else {
+    @warn "Unfortunately, no value could be retrieved from `#{$breakpoint}`. "
+        + "Available breakpoints are: #{map-keys($breakpoints)}.";
+  }
+}
+
+// Breakpoint viewport sizes and media queries.
+//
+// Breakpoints are defined as a map of (name: minimum width), order from small to large:
+
+/// @author Tolu Adesina
+/// @param {String} $breakpoints - Breakpoint value
+/// @param {String} $name - px size value (name). Will be passed when funtion is called
+/// @require $breakpoint-values
+@function breakpoint-next($name, $breakpoints: $breakpoint-values, $breakpoint-names: map-keys($breakpoints)) {
+  $n: index($breakpoint-names, $name);
+  @return if($n != null and $n < length($breakpoint-names), nth($breakpoint-names, $n + 1), null);
+}
+
+// Minimum breakpoint width. Null for the smallest (first) breakpoint.
+@function breakpoint-min($name, $breakpoints: $breakpoint-values) {
+  $min: map-get($breakpoints, $name);
+  @return if($min != 0, $min, null);
+}
+
+// Maximum breakpoint width. Null for the largest (last) breakpoint.
+// The maximum value is calculated as the minimum of the next one less 0.02px
+// to work around the limitations of `min-` and `max-` prefixes and viewports with fractional widths.
+// See https://www.w3.org/TR/mediaqueries-4/#mq-min-max
+// Uses 0.02px rather than 0.01px to work around a current rounding bug in Safari.
+// See https://bugs.webkit.org/show_bug.cgi?id=178261
+@function breakpoint-max($name, $breakpoints: $breakpoint-values) {
+  $next: breakpoint-next($name, $breakpoints);
+  @return if($next, breakpoint-min($next, $breakpoints) - 0.02, null);
+}
+
+/// Mixin to manage responsive breakpoints
+/// @author Tolu Adesina
+/// @param {String} $breakpoints - Breakpoint value
+/// @param {String} $name - px size value (name). Will be passed when funtion is called
+/// @require $breakpoint-values
+@mixin breakpoint-up($name, $breakpoints: $breakpoint-values) {
+  $min: breakpoint-min($name, $breakpoints);
+
+  @if $min {
+    @media (min-width: $min) {
+      @content;
+    }
+  } @else {
+    @warn "Unfortunately, no value could be retrieved from `#{$breakpoint}`. "
+        + "Available breakpoints are: #{map-keys($breakpoints)}.";
+  }
+}
+
+// Media of at most the maximum breakpoint width. No query for the largest breakpoint.
+// Makes the @content apply to the given breakpoint and narrower.
+/// @author Tolu Adesina
+/// @param {String} $breakpoints - Breakpoint value
+/// @param {String} $name - px size value (name). Will be passed when funtion is called
+/// @require $breakpoint-values
+@mixin breakpoint-down($name, $breakpoints: $breakpoint-values) {
+  $max: breakpoint-max($name, $breakpoints);
+  @if $max {
+    @media (max-width: $max) {
+      @content;
+    }
+  } @else {
+    @warn "Unfortunately, no value could be retrieved from `#{$breakpoint}`. "
+        + "Available breakpoints are: #{map-keys($breakpoints)}.";
+  }
+}
+
+// Media that spans multiple breakpoint widths.
+// Makes the @content apply between the min and max breakpoints
+/// @author Tolu Adesina
+/// @param {String} $breakpoints - Breakpoint name
+/// @param {String} $lower - Minimum screen value
+/// @param {String} $upper - Maximum screen value
+/// @require $breakpoint-values
+@mixin breakpoint-between($lower, $upper, $breakpoints: $breakpoint-values) {
+  $min: breakpoint-min($lower, $breakpoints);
+  $max: breakpoint-max($upper, $breakpoints);
+
+  @if $min != null and $max != null {
+    @media (min-width: $min) and (max-width: $max) {
+      @content;
+    }
+  } @else if $max == null {
+    @include breakpoint-up($lower, $breakpoints) {
+      @content;
+    }
+  } @else if $min == null {
+    @include breakpoint-down($upper, $breakpoints) {
+      @content;
+    }
+  }
+}

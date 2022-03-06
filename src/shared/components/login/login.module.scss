@@ -1,0 +1,32 @@
+@import "../../../assets/scss/breakpoints";
+
+.login--screen--background {
+  background-image: url("./mobile-login-unsplashed.jpg");
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: top center;
+  width: 100%;
+  height: 100%;
+
+  // Tablet
+  @include breakpoint-up(md) {
+    background-image: url("./tablet-login-unsplashed.jpg");
+  }
+
+  // Desktop
+  @include breakpoint-up(lg) {
+    background-image: url("./desktop-login-unsplashed.jpg");
+  }
+}
+
+.logo {
+  max-width: 50px;
+  width: 100%;
+  height: auto;
+}
+
+.project-title--image {
+  max-width: 240px;
+  width: 100%;
+  height: auto;
+}

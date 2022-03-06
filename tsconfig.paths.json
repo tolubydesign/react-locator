@@ -33,6 +33,7 @@
       "@pipes/*": ["./src/shared/pipes/*"],
       "@core/*": ["./src/core/*"]
     },
+    "types": ["modernizr", "node", "react", "react-dom", "jest"]
   },
   "include": [
     "src/**/*"
@@ -40,5 +41,5 @@
   "exclude": [
     "node_modules",
     "**/*.spec.ts"
-  ]
+  ],
 }
