@@ -34,7 +34,7 @@ export default function Login() {
       <div className="mx-w-screen-md flex flex-col w-9/12 md:w-80">
         <Logo className={CN(SCSS["logo"], "mx-auto mb-6 md:mb-8")} aria-label="Project logo." />
         <ProjectTitle className={CN(SCSS["project-title--image"], "mx-auto mb-6 md:mb-8")}
-          aria-label="Project title, 'Search and Found'." />  
+          aria-label="Project title, 'Search and Found'." />
 
         <button className={CN(basicButton, "bg-teal-500 mb-6 md:mb-8")}
           onClick={() => signIn()}>Login</button>

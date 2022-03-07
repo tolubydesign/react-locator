@@ -4,8 +4,8 @@ const Login = React.lazy(() => import("./shared/components/login/login"));
 
 export default function App() {
   return (
-    <div className="App">
-      <Suspense fallback={<div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>Loading...</div>}>
+    <div className="component">
+      <Suspense fallback={<div className='flex justifty-center items-center'>Loading...</div>}>
         <Login />
       </Suspense>
     </div>

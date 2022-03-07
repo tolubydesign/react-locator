@@ -1,13 +1,38 @@
-import React from 'react';
+import React, { Suspense, lazy } from 'react';
 import ReactDOM from 'react-dom';
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+} from "react-router-dom";
 import './index.scss';
-import App from './App';
 import * as serviceWorkerRegistration from './serviceWorkerRegistration';
 import reportWebVitals from './reportWebVitals';
+// Critial items must be placed above.
+// Components
+import App from './App';
+import Navigation from './shared/components/navigation/navigation';
+// Lazy loaded components
+const Discovery = lazy(() => import('./shared/components/discovery/discovery'));
+const Map = lazy(() => import('./shared/components/map/map'));
+
+
+
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <BrowserRouter>
+      <Navigation />
+
+      <Suspense fallback={<div className='flex justifty-center items-center'>Loading...</div>}>
+        <Routes>
+          <Route path="/" element={<App />} />
+          <Route path="/discovery" element={<Discovery />} />
+          <Route path="/map" element={<Map />} />
+        </Routes>
+      </Suspense>
+
+    </BrowserRouter>
   </React.StrictMode>,
   document.getElementById('root')
 );
