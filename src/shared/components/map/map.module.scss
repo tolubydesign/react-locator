@@ -1,1 +1,6 @@
 @import "../../../assets/scss/breakpoints";
+
+.leaflet-map-comp {
+  height: 500px;
+  z-index: 0;
+}

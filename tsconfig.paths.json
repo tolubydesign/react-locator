@@ -33,7 +33,7 @@
       "@pipes/*": ["./src/shared/pipes/*"],
       "@core/*": ["./src/core/*"]
     },
-    "types": ["modernizr", "node", "react", "react-dom", "jest"]
+    "types": ["modernizr", "node", "react", "react-dom", "jest", "leaflet"]
   },
   "include": [
     "src/**/*"
