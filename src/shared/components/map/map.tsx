@@ -59,19 +59,18 @@ export default function Map() {
   const [mapError, setMapError] = useState<string | null>(null);
 
   // Reference: https://docs.mapbox.com/api/maps/styles/#mapbox-styles
-  const mapLayerIDs = {
-    "streets": 'mapbox/streets-v11', // mapbox://styles/mapbox/streets-v11
-    "satellite": "mapbox/satellite-v9", // mapbox://styles/mapbox/satellite-v9
-    "street-satellite": "mapbox/satellite-streets-v11", // mapbox://styles/mapbox/satellite-streets-v11
-    "light": "mapbox/light-v10", // mapbox://styles/mapbox/light-v10
-    "dark": "mapbox/dark-v10", // mapbox://styles/mapbox/dark-v10
-    "outdoors": "mapbox/outdoors-v11", // mapbox://styles/mapbox/outdoors-v11
-    "navigation-day": "mapbox/navigation-day-v1", // mapbox://styles/mapbox/navigation-day-v1
-    "navigation-night": "mapbox/navigation-night-v1", // mapbox://styles/mapbox/navigation-night-v1
-  }
+  const mapLayerIDs = [
+    { name: "streets", id: 'mapbox/streets-v11' }, // mapbox://styles/mapbox/streets-v11
+    { name: "satellite", id: "mapbox/satellite-v9" },// mapbox://styles/mapbox/satellite-v9
+    { name: "street-satellite", id: "mapbox/satellite-streets-v11" }, // mapbox://styles/mapbox/satellite-streets-v11
+    { name: "light", id: "mapbox/light-v10" }, // mapbox://styles/mapbox/light-v10
+    { name: "dark", id: "mapbox/dark-v10" }, // mapbox://styles/mapbox/dark-v10
+    { name: "outdoors", id: "mapbox/outdoors-v11" }, // mapbox://styles/mapbox/outdoors-v11
+    { name: "navigation-day", id: "mapbox/navigation-day-v1" }, // mapbox://styles/mapbox/navigation-day-v1
+    { name: "navigation-night", id: "mapbox/navigation-night-v1" }, // mapbox://styles/mapbox/navigation-night-v1
+  ]
 
-  const leafletMapCompClasName = CN(SCSS["leaflet-map-comp"]);
-
+  const leafletMapCompClassName = CN(SCSS["leaflet-map-comp"], "relative");
 
   // Find the user's approxomate location.
   const loacateUser = () => {
@@ -89,41 +88,96 @@ export default function Map() {
     })
   }
 
+  const generateMapLayers = () => {
+    return mapLayerIDs.map((layer, index: number) => {
+      return {
+        name: layer.name,
+        map: L.tileLayer(mapStyle, {
+          attribution: mapAttribute,
+          maxZoom: 18,
+          id: layer.id,
+          tileSize: 512,
+          zoomOffset: -1,
+          accessToken: process.env.REACT_APP_MAPBOX_ACCESS_TOKEN
+        })
+      }
+    })
+  }
+
   // initialize the map on the "map" div with a given center and zoom
   const initializeMap = () => {
     try {
-      map = L.map('leaflet-map', {
-        center: [51.505, -0.09],
-        zoom: 13
-      });
+      // map = L.map('leaflet-map', {
+      //   center: [51.505, -0.09],
+      //   zoom: 13
+      // });
+      map = L.map('leaflet-map');
 
       if (map && !userLocation) {
         loacateUser()
       }
 
-      L.tileLayer(mapStyle, {
+      const baseMaps: any = {}
+      const generatedMaps = generateMapLayers();
+      const defaultLayer = L.tileLayer(mapStyle, {
         attribution: mapAttribute,
         maxZoom: 18,
         id: mapLayerID,
         tileSize: 512,
         zoomOffset: -1,
-        accessToken: `${process.env.REACT_APP_MAPBOX_ACCESS_TOKEN}`
-      }).addTo(map);
-      map.attributionControl.setPrefix(''); // Don't show the 'Powered by Leaflet' text.
-      console.log("FUNCTION initializeMap", map, _map);
+        accessToken: process.env.REACT_APP_MAPBOX_ACCESS_TOKEN
+      });
 
-      
+      for (const [key, value] of Object.entries(generatedMaps)) {
+        if (Object.prototype.hasOwnProperty.call(generatedMaps, key)) {
+          // const io = generatedMaps[key].name;
+          const v = value.name
+          baseMaps[v] = value.map;
+
+        }
+      }
+
+      map.addLayer(defaultLayer);
+
+      // Initialise overlay layers
+      var hiking = L.tileLayer('//tile.lonvia.de/hiking/{z}/{x}/{y}.png', {
+        maxZoom: 18
+      })
+
+      var cycling = L.tileLayer('//tile.waymarkedtrails.org/cycling/{z}/{x}/{y}.png', {
+        maxZoom: 18
+      })
+
+      var overlayMaps = {
+        'Lonvia hiking routes': hiking,
+        'Lonvia cycling routes': cycling
+      };
+
+      // Add the layer picker control
+      var layerControl = L.control.layers(baseMaps, overlayMaps).addTo(map);
+
+      map.attributionControl.setPrefix(''); // Don't show the 'Powered by Leaflet' text. Attribution overload
+
+      var loc = new L.LatLng(51.505, -0.09);
+      map.setView(loc, 13);
+
+
+      console.log("FUNCTION initializeMap", baseMaps);
+
+
+
+
       // var maker = L.marker([25.045403, 121.526088], { icon: markerIcon }).addTo(map);
 
 
       /** Reference: https://harrywood.co.uk/maps/examples/leaflet/geolocate.view.html */
       // map view before we get the location
       map.setView(new L.LatLng(51.505, -0.09), 13);
+
       // Set the map to show the user's location
       map.on('locationfound', onLocationFound);
       map.on('locationerror', onLocationError);
       map.locate({ setView: true, maxZoom: 16 });
-
       L.marker([50.5, 30.5]).addTo(map);
 
       // assign to _map;
@@ -162,10 +216,6 @@ export default function Map() {
       iconUrl: MarkerIconPNG,
       iconSize: [25, 41],
       popupAnchor: [0, -10],
-      // shadowUrl: require('../static/marker.png'),
-      // iconAnchor: [18, 18],
-      // shadowSize: [0, 0],
-      // shadowAnchor: [10, 10]
     });
 
     // set marker icon 
@@ -180,36 +230,64 @@ export default function Map() {
     // TODO: If the map Error, set to closest point to user.
   }
 
+  // const handleChangeMapLayer = ({ name, id }: { name: string, id: string }) => {
+  //   setMapLayerID(id);
+  //   changeLayer(id)
+  // }
+
+  // const changeLayer = (layer: string) => {
+  //   console.log("(changeLayer)", layer);
+  //   if (!map && _map) {
+  //     map = _map;
+  //   }
+
+  //   // map.clearLayers()
+  //   // map.remove();
+  //   // // map = null;
+
+  //   // map = L.map('leaflet-map');
+
+  //   L.tileLayer(mapStyle, {
+  //     attribution: mapAttribute,
+  //     maxZoom: 18,
+  //     id: layer,
+  //     tileSize: 512,
+  //     zoomOffset: -1,
+  //     accessToken: process.env.REACT_APP_MAPBOX_ACCESS_TOKEN
+  //   }).addTo(map)
+
+  //   // assign to _map;
+  //   MapState(map);
+  // }
+
   useEffect(() => {
     console.log("Location:", userLocation)
   }, [userLocation])
 
   useEffect(() => {
-    if (!_map) {
+    if (!_map && !map) {
       initializeMap();
       // setUserGeolocation()
-    }
-
-    // TODO: Comment. Explain behaviour/reasons.
-    if (map && !_map) {
+    } else if (map && !_map) {
+      // TODO: Comment. Explain behaviour/reasons.
       // assign to _map; `_map = map`
       MapState(map);
-    }
-
-    // Map has already been iniitalised. Reassign map to _map, source of truth.
-    if (_map && !map) {
+    } else if (!map && _map) {
+      // Map has already been iniitalised. Reassign map to _map, source of truth.
       map = _map
     }
 
     // Reset Map Error component state
     setMapError(null);
+
+    console.log("COMPONENT MAP:", map, _map);
   }, [])
 
   return (
     <div className="component">
 
-      <div id="leaflet-map" className={leafletMapCompClasName} >
-
+      <div className="relative mx-w">
+        <div id="leaflet-map" className={leafletMapCompClassName}></div>
       </div>
       {/* set response error. if there are issues with the map or setup of map */}
       <div className="flex justify-center items-center">
