@@ -154,19 +154,11 @@ export default function Map() {
       };
 
       // Add the layer picker control
-      var layerControl = L.control.layers(baseMaps, overlayMaps).addTo(map);
-
+      var layerControl = L.control.layers(baseMaps).addTo(map);
       map.attributionControl.setPrefix(''); // Don't show the 'Powered by Leaflet' text. Attribution overload
 
       var loc = new L.LatLng(51.505, -0.09);
       map.setView(loc, 13);
-
-
-      console.log("FUNCTION initializeMap", baseMaps);
-
-
-
-
       // var maker = L.marker([25.045403, 121.526088], { icon: markerIcon }).addTo(map);
 
 
@@ -191,6 +183,8 @@ export default function Map() {
 
   }
 
+
+  // TODO: experiemental work
   const setUserGeolocation = () => {
     navigator.geolocation.getCurrentPosition((location) => {
       var latlng = new L.LatLng(location.coords.latitude, location.coords.longitude);
@@ -229,36 +223,6 @@ export default function Map() {
 
     // TODO: If the map Error, set to closest point to user.
   }
-
-  // const handleChangeMapLayer = ({ name, id }: { name: string, id: string }) => {
-  //   setMapLayerID(id);
-  //   changeLayer(id)
-  // }
-
-  // const changeLayer = (layer: string) => {
-  //   console.log("(changeLayer)", layer);
-  //   if (!map && _map) {
-  //     map = _map;
-  //   }
-
-  //   // map.clearLayers()
-  //   // map.remove();
-  //   // // map = null;
-
-  //   // map = L.map('leaflet-map');
-
-  //   L.tileLayer(mapStyle, {
-  //     attribution: mapAttribute,
-  //     maxZoom: 18,
-  //     id: layer,
-  //     tileSize: 512,
-  //     zoomOffset: -1,
-  //     accessToken: process.env.REACT_APP_MAPBOX_ACCESS_TOKEN
-  //   }).addTo(map)
-
-  //   // assign to _map;
-  //   MapState(map);
-  // }
 
   useEffect(() => {
     console.log("Location:", userLocation)
