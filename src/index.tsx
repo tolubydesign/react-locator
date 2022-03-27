@@ -11,7 +11,7 @@ import reportWebVitals from './reportWebVitals';
 // Critial items must be placed above.
 // Components
 import App from './App';
-import Navigation from './shared/components/navigation/navigation';
+import Navi from './shared/components/navigation/navi';
 // Lazy loaded components
 const Discovery = lazy(() => import('./shared/components/discovery/discovery'));
 const Map = lazy(() => import('./shared/components/map/map'));
@@ -22,7 +22,7 @@ const Map = lazy(() => import('./shared/components/map/map'));
 ReactDOM.render(
   <React.StrictMode>
     <BrowserRouter>
-      <Navigation />
+      <Navi />
 
       <Suspense fallback={<div className='flex justifty-center items-center'>Loading...</div>}>
         <Routes>

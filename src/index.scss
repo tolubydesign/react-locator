@@ -2,6 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 
+@import './assets/scss/breakpoints';
+
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
@@ -19,4 +21,13 @@ code {
 .component {
   width: 100vw;
   height: 100vh;
+}
+
+.component-content {
+  width: 100%;
+  padding: 0 20px;
+
+  @include breakpoint-up(md) {
+    padding: 0 40px;
+  }
 }
