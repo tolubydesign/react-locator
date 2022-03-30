@@ -36,6 +36,7 @@
     "types": ["modernizr", "node", "react", "react-dom", "jest", "leaflet"]
   },
   "include": [
+    "src",
     "src/**/*"
   ],
   "exclude": [
