@@ -1,3 +1,40 @@
-@import "../../../assets/scss/breakpoints";
+@import "../../../assets/scss/_breakpoints";
+
+.navi--aside {
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  z-index: 10;
+
+  @include breakpoint-up(md) {
+    top: 20px;
+    left: 20px;
+  }
+}
+
+.navi--aside {
+  &.active {
+    left: 0;
+
+  }
+}
+
+.navi--navigation {
+  position: relative;
+}
+
+.navi--inidcator {
+  position: absolute;
+  top: 0;
+  right: -10px;
+
+  border-radius: 0 6px 6px 0;
+}
+
+.navi--inidcator {
+  &.active {
+    right: -22px;
+  }  
+}
 
 
