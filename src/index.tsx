@@ -12,25 +12,27 @@ import reportWebVitals from './reportWebVitals';
 // Components
 import App from './App';
 import Navi from './shared/components/navigation/navi';
+import { Provider } from 'react-redux';
+import { store } from './core/redux-store/store';
 // Lazy loaded components
 const Discovery = lazy(() => import('./shared/components/discovery/discovery'));
 const Map = lazy(() => import('./shared/components/map/map'));
 
-
-
-
 ReactDOM.render(
   <React.StrictMode>
     <BrowserRouter>
-      <Navi />
+      <Provider store={store}>
+        <Navi />
 
-      <Suspense fallback={<div className='flex justifty-center items-center'>Loading...</div>}>
-        <Routes>
-          <Route path="/" element={<App />} />
-          <Route path="/discovery" element={<Discovery />} />
-          <Route path="/map" element={<Map />} />
-        </Routes>
-      </Suspense>
+        <Suspense fallback={<div className='flex justifty-center items-center'>Loading...</div>}>
+          <Routes>
+            <Route path="/" element={<App />} />
+            <Route path="/discovery" element={<Discovery />} />
+            <Route path="/map" element={<Map />} />
+          </Routes>
+        </Suspense>
+
+      </Provider>
 
     </BrowserRouter>
   </React.StrictMode>,
