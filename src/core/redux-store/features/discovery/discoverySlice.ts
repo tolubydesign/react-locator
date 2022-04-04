@@ -1,9 +1,10 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState, AppThunk } from '../../store';
 import { fetchProminentLocations } from '../api/locations-api';
+import { ProminentLocations } from '../api/mock-data/simplemaps-locations';
 
 export interface DiscoveryState {
-  completeLocations: any;
+  completeLocations: ProminentLocations[];
   locations: any;
   search: string;
   userPosition: any;
