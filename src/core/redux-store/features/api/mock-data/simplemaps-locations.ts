@@ -3,20 +3,20 @@
  * https://simplemaps.com/data/za-cities
  */
 
-export type ProminentLocations = {
-  admin_name: string,
-  capital: string,
-  city: string,
-  country: string,
-  iso2: string,
-  lat: string,
-  lng: string,
-  population: string,
-  population_proper: string,
-  bg_image?: string,
+export interface ProminentLocation {
+  admin_name: string;
+  capital: string;
+  city: string;
+  country: string;
+  iso2: string;
+  lat: string;
+  lng: string;
+  population: string;
+  population_proper: string;
+  bg_image?: string;
 }
 
-export const prominentLocations: ProminentLocations[] = [
+export const prominentLocations: ProminentLocation[] = [
   {
     city: "Johannesburg",
     lat: "-26.2044",

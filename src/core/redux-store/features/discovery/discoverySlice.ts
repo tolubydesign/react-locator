@@ -1,14 +1,15 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState, AppThunk } from '../../store';
 import { fetchProminentLocations } from '../api/locations-api';
-import { ProminentLocations } from '../api/mock-data/simplemaps-locations';
+import { ProminentLocation } from '../api/mock-data/simplemaps-locations';
+import { GetProvinces } from './discovery-store-helpers';
 
 export interface DiscoveryState {
-  completeLocations: ProminentLocations[];
+  completeLocations: ProminentLocation[];
   locations: any;
   search: string;
   userPosition: any;
-  provinces: any[];
+  provinces: ProminentLocation[];
   status: 'idle' | 'complete' | 'loading' | 'failed';
 }
 
@@ -32,7 +33,7 @@ export const discoverySlice = createSlice({
   name: 'discovery',
   initialState,
   reducers: {
-    setProvinces: (state: DiscoveryState, action: PayloadAction<any[]>) => {
+    setProvinces: (state: DiscoveryState, action: PayloadAction<ProminentLocation[]>) => {
       state.provinces = action.payload;
     },
     setUserPosition: (state: DiscoveryState, action: PayloadAction<any[]>) => {
@@ -50,9 +51,11 @@ export const discoverySlice = createSlice({
       .addCase(FetchProminentLocationsAsync.pending, (state: DiscoveryState) => {
         state.status = 'loading';
       })
-      .addCase(FetchProminentLocationsAsync.fulfilled, (state: DiscoveryState, action: PayloadAction<any>) => {
+      .addCase(FetchProminentLocationsAsync.fulfilled, (state: DiscoveryState, action: PayloadAction<ProminentLocation[]>) => {
         state.status = 'complete';
         state.completeLocations = action.payload;
+        // Function to get unique provinces. Create a list of none duplicate provinces  
+        state.provinces = GetProvinces(action.payload)
       })
       .addCase(FetchProminentLocationsAsync.rejected, (state: DiscoveryState) => {
         state.status = 'failed';
