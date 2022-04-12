@@ -18,6 +18,14 @@ import { store } from './core/redux-store/store';
 const Discovery = lazy(() => import('./shared/components/discovery/discovery'));
 const Map = lazy(() => import('./shared/components/map/map'));
 
+// Routes
+const Discover = (props: any) => {
+  console.log("ROUTE", props)
+  return (
+    <></>
+  )
+};
+
 ReactDOM.render(
   <React.StrictMode>
     <BrowserRouter>
@@ -28,12 +36,12 @@ ReactDOM.render(
           <Routes>
             <Route path="/" element={<App />} />
             <Route path="/discovery" element={<Discovery />} />
+            <Route path="/discovery/:id" element={<Discover />} />
             <Route path="/map" element={<Map />} />
           </Routes>
         </Suspense>
 
       </Provider>
-
     </BrowserRouter>
   </React.StrictMode>,
   document.getElementById('root')
