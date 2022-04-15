@@ -14,17 +14,11 @@ import App from './App';
 import Navi from './shared/components/navigation/navi';
 import { Provider } from 'react-redux';
 import { store } from './core/redux-store/store';
+
 // Lazy loaded components
 const Discovery = lazy(() => import('./shared/components/discovery/discovery'));
 const Map = lazy(() => import('./shared/components/map/map'));
-
-// Routes
-const Discover = (props: any) => {
-  console.log("ROUTE", props)
-  return (
-    <></>
-  )
-};
+const Province = lazy(() => import('./shared/components/discovery/province/province'));
 
 ReactDOM.render(
   <React.StrictMode>
@@ -35,8 +29,11 @@ ReactDOM.render(
         <Suspense fallback={<div className='flex justifty-center items-center'>Loading...</div>}>
           <Routes>
             <Route path="/" element={<App />} />
-            <Route path="/discovery" element={<Discovery />} />
-            <Route path="/discovery/:id" element={<Discover />} />
+            <Route path="/discovery">
+              <Route path="" element={<Discovery />} />
+              <Route path="province/:id" element={<Province />} />
+              {/* <Route path=":id" element={<UserProfile />} /> */}
+            </Route>
             <Route path="/map" element={<Map />} />
           </Routes>
         </Suspense>

@@ -1,4 +1,5 @@
 import React, { useEffect, Suspense, lazy } from "react";
+import { useNavigate } from "react-router-dom";
 import CN from "classnames";
 import SCSS from "./discovery.module.scss";
 import SearchBar from "../search-bar/search-bar";
@@ -16,9 +17,19 @@ export default function Discovery<React>() {
   const status = useAppSelector(selectStatus);
   // const loc: ProminentLocation[] = useAppSelector(selectCompleteLocation);
   const provinces: ProminentLocation[] = useAppSelector(selectProvinces);
+  const navigate = useNavigate();
 
   const dispatch = useAppDispatch();
 
+  const compContent = CN("component-content",)
+  const prominentButtonClassName = CN(SCSS["prominent-location--button"], "flex justify-center items-center bg-gray-100 relative w-full h-40 overflow-hidden mb-6 rounded-md");
+  const backgroundImageClassName = CN(SCSS["prominent-location--background-image"], "absolute w-full");
+  const prominentTextClassName = CN("text-xl md:text-2xl font-extrabold text-white absolute bottom-4 left-4");
+
+  const handleClick = (id: string) => {
+    navigate(`/edit/${id}`);
+  };
+ 
   // Check store and update it if nothing is there
   useEffect(() => {
     if (status !== "complete") {
@@ -29,12 +40,6 @@ export default function Discovery<React>() {
   useEffect(() => {
     console.log("COMP Discovery useEffet", provinces)
   }, [status])
-
-  const compContent = CN("component-content",)
-  const prominentButtonClassName = CN(SCSS["prominent-location--button"], "flex justify-center items-center bg-gray-100 relative w-full h-40 overflow-hidden mb-6 rounded-md");
-  const backgroundImageClassName = CN(SCSS["prominent-location--background-image"], "absolute w-full");
-  const prominentTextClassName = CN("text-xl md:text-2xl font-extrabold text-white absolute bottom-4 left-4");
-
 
   return (
     <Layout>
