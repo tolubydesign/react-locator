@@ -10,26 +10,20 @@ import {
 import { Layout } from "../../../core/layout/layout";
 import Title from "../../../core/header/location-title/title";
 import { ProminentLocation } from "../../../core/redux-store/features/api/mock-data/simplemaps-locations";
+import LocationCard from "./location-card/location-card";
 const Spinner = lazy(() => import("../../../core/spinner/spinner"));
 
 export default function Discovery<React>() {
   const discoveryState = useAppSelector(selectDiscovery);
   const status = useAppSelector(selectStatus);
-  // const loc: ProminentLocation[] = useAppSelector(selectCompleteLocation);
   const provinces: ProminentLocation[] = useAppSelector(selectProvinces);
   const navigate = useNavigate();
-
   const dispatch = useAppDispatch();
 
-  const compContent = CN("component-content",)
-  const prominentButtonClassName = CN(SCSS["prominent-location--button"], "flex justify-center items-center bg-gray-100 relative w-full h-40 overflow-hidden mb-6 rounded-md");
-  const backgroundImageClassName = CN(SCSS["prominent-location--background-image"], "absolute w-full");
-  const prominentTextClassName = CN("text-xl md:text-2xl font-extrabold text-white absolute bottom-4 left-4");
-
-  const handleClick = (id: string) => {
-    navigate(`/edit/${id}`);
+  const handleCardClick = (place: ProminentLocation) => {
+    navigate(`/discovery/province/${place.admin_name}`);
   };
- 
+
   // Check store and update it if nothing is there
   useEffect(() => {
     if (status !== "complete") {
@@ -43,26 +37,19 @@ export default function Discovery<React>() {
 
   return (
     <Layout>
-      <div className={compContent}>
-        <SearchBar />
-        <Title text="Discovery" />
+      <SearchBar />
+      <Title text="Discovery" />
 
-        <div className="flex flex-col">
-          {
-            provinces.map((l: ProminentLocation, index: number) => {
-              return (
-                <Suspense fallback={<Spinner />}>
-                  <button key={`${l.lat}_${l.lng}`} data-element-map={`discovery-prominent-locations`} className={prominentButtonClassName}>
-                    <img className={backgroundImageClassName} src={l.bg_image}
-                      alt={`Background image of ${l.admin_name}.`} />
-                    <p className={prominentTextClassName} style={{ zIndex: 1 }}>{l.admin_name}</p>
-                  </button>
-                </Suspense>
-              )
-            })
-          }
-        </div>
-
+      <div className="flex flex-col">
+        {
+          provinces.map((l: ProminentLocation, index: number) => {
+            return (
+              <Suspense key={l.admin_name + index + l.lat} fallback={<Spinner />}>
+                <LocationCard location={l} handleCardClick={handleCardClick} showcase={"province"} />
+              </Suspense>
+            )
+          })
+        }
       </div>
     </Layout>
 

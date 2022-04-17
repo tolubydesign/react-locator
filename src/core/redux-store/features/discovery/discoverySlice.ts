@@ -11,6 +11,11 @@ export interface DiscoveryState {
   userPosition: any;
   provinces: ProminentLocation[];
   status: 'idle' | 'complete' | 'loading' | 'failed';
+  displayContent: {
+    cities: ProminentLocation[],
+    province: ProminentLocation,
+
+  }
 }
 
 const initialState: DiscoveryState = {
@@ -20,12 +25,27 @@ const initialState: DiscoveryState = {
   search: "",
   userPosition: "",
   status: 'idle',
+  displayContent: {
+    cities: [],
+    province: {
+      admin_name: "",
+      capital: "",
+      city: "",
+      country: "",
+      iso2: "",
+      lat: "",
+      lng: "",
+      population: "",
+      population_proper: "",
+      bg_image: "",
+    },
+
+  }
 };
 
 
 export const FetchProminentLocationsAsync = createAsyncThunk("discovery/FetchLocationsAsync", async () => {
   const response: string = await fetchProminentLocations();
-  console.log("FetchProminentLocationsAsync", JSON.parse(response));
   return JSON.parse(response);
 })
 
@@ -42,6 +62,16 @@ export const discoverySlice = createSlice({
     setSearch: (state: DiscoveryState, action: PayloadAction<string>) => {
       state.search = action.payload
     },
+    setProvinceCity: (state: DiscoveryState, action: PayloadAction<string>) => {
+      // Find all locations with admin_name/province of action
+      state.displayContent.cities = state.completeLocations.filter((location) => {
+        if (location.admin_name.toLocaleLowerCase() === action.payload.toLocaleLowerCase()) {
+          return location;
+        }
+      });
+
+      console.log("STATE - reducers{setProvinceCity}", state.displayContent, state.completeLocations, action.payload);
+    }
   },
 
   // The `extraReducers` field lets the slice handle actions defined elsewhere,
@@ -63,12 +93,14 @@ export const discoverySlice = createSlice({
   },
 });
 
-export const { setProvinces, setUserPosition, setSearch } = discoverySlice.actions;
+export const { setProvinces, setUserPosition, setSearch, setProvinceCity } = discoverySlice.actions;
 
 export const selectDiscovery = (state: RootState) => (state.discovery) ? state.discovery : initialState;
 export const selectCompleteLocation = (state: RootState) => (state.discovery.completeLocations) ? state.discovery.completeLocations : initialState.completeLocations;
 export const selectProvinces = (state: RootState) => (state.discovery.provinces) ? state.discovery.provinces : initialState.provinces;
 export const selectLocations = (state: RootState) => (state.discovery.locations) ? state.discovery.locations : initialState.locations;
 export const selectStatus = (state: RootState) => state.discovery.status;
+export const selectDisplayContent = (state: RootState) => state.discovery.displayContent;
+export const selectDisplayCities = (state: RootState) => state.discovery.displayContent.cities;
 
 export default discoverySlice.reducer;

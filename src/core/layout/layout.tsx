@@ -10,7 +10,7 @@ export function Layout({ children }: LayoutProps) {
   return (
     <main>
       <NavigationalBar />
-      {children}
+      <div className="component-content">{children}</div>
     </main>
   )
 }
