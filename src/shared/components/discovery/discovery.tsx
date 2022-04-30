@@ -21,7 +21,7 @@ export default function Discovery<React>() {
   const dispatch = useAppDispatch();
 
   const handleCardClick = (place: ProminentLocation) => {
-    navigate(`/discovery/province/${place.admin_name}`);
+    navigate(`/discovery/province/${place.admin_name.toLocaleLowerCase()}`);
   };
 
   // Check store and update it if nothing is there

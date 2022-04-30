@@ -1,12 +1,17 @@
 import React, { lazy, Suspense, useEffect, useState } from "react";
 import CN from "classnames";
 import { Layout } from "../../../../core/layout/layout";
-import { Location, useLocation } from 'react-router-dom';
+import { Location, useLocation, useNavigate } from 'react-router-dom';
 import { ProminentLocation } from "../../../../core/redux-store/features/api/mock-data/simplemaps-locations";
 import { useAppDispatch, useAppSelector } from "../../../../core/redux-store/hooks";
-import { FetchProminentLocationsAsync, selectDisplayCities, selectDisplayContent, selectProvinces, selectStatus, setProvinceCity } from "../../../../core/redux-store/features/discovery/discoverySlice";
+import {
+  FetchProminentLocationsAsync, selectDisplayCities, selectDisplayContent, selectProvinces, selectStatus, setProvinceCity
+} from "../../../../core/redux-store/features/discovery/discoverySlice";
 import LocationCard from "../location-card/location-card";
+import Title from "../../../../core/header/location-title/title";
+import SearchBar from "../../search-bar/search-bar";
 const Spinner = lazy(() => import("../../../../core/spinner/spinner"));
+
 
 export default function Province(props: any) {
   const location: Location = useLocation();
@@ -16,9 +21,14 @@ export default function Province(props: any) {
   const dispatch = useAppDispatch();
   const [error, setError] = useState<boolean>(false);
   const displayContnet = useAppSelector(selectDisplayContent)
+  const navigate = useNavigate();
+  const [pageLocation, setPageLocation] = useState("");
 
-  const compContent = CN("component-content")
-  const checkRouterLocation = () => {
+  /**
+   * Find out what province the user is trying access. URL information.
+   * @returns string. Returns the found province that the 
+   */
+  const checkRouterLocation = (): ProminentLocation | undefined => {
     // Reset error state
     setError(false);
 
@@ -26,7 +36,7 @@ export default function Province(props: any) {
     let prov: ProminentLocation | undefined = undefined;
 
     // Find page name
-    const pageLocation = path.replace("/discovery/province/", "");
+    setPageLocation(path.replace("/discovery/province/", ""));
     // Loop through all Provinces, fetched from API,
     prov = provinces.find((province: ProminentLocation) => {
       if (province.admin_name.toLocaleLowerCase() === pageLocation.toLocaleLowerCase()) {
@@ -44,11 +54,20 @@ export default function Province(props: any) {
       setError(true);
     }
 
+    // Can possibly return undefined 
     return prov
   }
 
   const handleCardClick = (place: ProminentLocation) => {
     console.log("FUNCTION:handleCardClick", place)
+    navigate(`/discovery/province/${place.admin_name.toLocaleLowerCase()}`);
+  }
+
+  const titleText = (): string => {
+    const path: string = location.pathname
+    let prov: ProminentLocation | undefined = undefined;
+    // Find page name
+    return `Province: ${pageLocation}`;
   }
 
   // Check store and update it if nothing is there
@@ -65,6 +84,9 @@ export default function Province(props: any) {
 
   return (
     <Layout>
+      <SearchBar />
+      <Title text={titleText()} />
+
       <div className="flex flex-col">
         {
           ((cities && cities.length > 0) && !error) && cities.map((city: ProminentLocation, index: number) => {
