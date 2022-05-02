@@ -10,8 +10,7 @@ import {
 import { Layout } from "../../../core/layout/layout";
 import Title from "../../../core/header/location-title/title";
 import { ProminentLocation } from "../../../core/redux-store/features/api/mock-data/simplemaps-locations";
-import LocationCard from "./location-card/location-card";
-const Spinner = lazy(() => import("../../../core/spinner/spinner"));
+import LocationCards from "./location-cards/location-cards";
 
 export default function Discovery<React>() {
   const discoveryState = useAppSelector(selectDiscovery);
@@ -37,20 +36,10 @@ export default function Discovery<React>() {
 
   return (
     <Layout>
-      <SearchBar />
       <Title text="Discovery" />
+      <SearchBar />
 
-      <div className="flex flex-col">
-        {
-          provinces.map((l: ProminentLocation, index: number) => {
-            return (
-              <Suspense key={l.admin_name + index + l.lat} fallback={<Spinner />}>
-                <LocationCard location={l} handleCardClick={handleCardClick} showcase={"province"} />
-              </Suspense>
-            )
-          })
-        }
-      </div>
+      {provinces && provinces.length > 0 && <LocationCards locations={provinces} handleCardClick={handleCardClick} showcase={"province"} />}
     </Layout>
 
   )

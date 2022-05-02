@@ -1,4 +1,4 @@
-import React, { lazy, Suspense, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import CN from "classnames";
 import { Layout } from "../../../../core/layout/layout";
 import { Link, Location, useLocation, useNavigate } from 'react-router-dom';
@@ -7,13 +7,11 @@ import { useAppDispatch, useAppSelector } from "../../../../core/redux-store/hoo
 import {
   FetchProminentLocationsAsync, selectDisplayCities, selectDisplayContent, selectProvinces, selectStatus, setProvinceCity
 } from "../../../../core/redux-store/features/discovery/discoverySlice";
-import LocationCard from "../location-card/location-card";
+import LocationCards from "../location-cards/location-cards";
 import Title from "../../../../core/header/location-title/title";
 import SearchBar from "../../search-bar/search-bar";
-const Spinner = lazy(() => import("../../../../core/spinner/spinner"));
 
 export function ProvinceRedirect() {
-
   return (
     <Layout>
       <div className="flex justify-center items-center h-full">
@@ -93,22 +91,11 @@ export default function Province(props: any) {
 
   return (
     <Layout>
-      <SearchBar />
       <Title text={titleText()} />
+      <SearchBar />
 
-      <div className="flex flex-col">
-        {
-          ((cities && cities.length > 0) && !error) && cities.map((city: ProminentLocation, index: number) => {
-            return (
-              <Suspense key={city.admin_name + index + city.lat} fallback={<Spinner />}>
-                <LocationCard location={city} handleCardClick={handleCardClick} showcase={"city"} />
-              </Suspense>
-            )
-          })
-        }
-
-        {error && <div><p>error found</p></div>}
-      </div>
+      {cities && cities.length > 0 && <LocationCards locations={cities} handleCardClick={handleCardClick} showcase={"city"} />}
+      {error && <div><p>error found</p></div>}
     </Layout>
   )
 

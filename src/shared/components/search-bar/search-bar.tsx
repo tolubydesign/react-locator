@@ -5,7 +5,7 @@ import SCSS from "./search-bar.module.scss";
 export default function SearchBar() {
 
   const [search, setSearch] = useState<string>("");
-  const section = CN(SCSS["search--component"])
+  const section = CN(SCSS["search--component"], "my-4")
   const searchGroupClassName = CN(SCSS["search--input--group"], "w-full flex flex-row justify-center items-center")
   const searchInputClassName = CN(SCSS["search--input"], "bg-gray-100 w-full rounded-md px-4 py-1 md:px-6 md:py-2");
   const filterImageClassName = CN(SCSS["filter--image"]);

@@ -1,5 +1,10 @@
 @import "../../../assets/scss/breakpoints";
 
-.prominent-location--button {}
+.prominent-location--button {
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+}
 
 .prominent-location--background-image {}
+

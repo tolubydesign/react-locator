@@ -7,7 +7,7 @@ import { useAppDispatch, useAppSelector } from "../../../../core/redux-store/hoo
 import {
   FetchProminentLocationsAsync, selectDisplayCities, selectDisplayContent, selectProvinces, selectStatus, setProvinceCity
 } from "../../../../core/redux-store/features/discovery/discoverySlice";
-import LocationCard from "../location-card/location-card";
+import LocationCard from "../location-cards/location-cards";
 import Title from "../../../../core/header/location-title/title";
 import SearchBar from "../../search-bar/search-bar";
 const Spinner = lazy(() => import("../../../../core/spinner/spinner"));
