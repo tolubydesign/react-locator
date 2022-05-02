@@ -12,8 +12,8 @@ export interface DiscoveryState {
   provinces: ProminentLocation[];
   status: 'idle' | 'complete' | 'loading' | 'failed';
   displayContent: {
-    cities: ProminentLocation[],
-    province: ProminentLocation,
+    cities: ProminentLocation[] | null,
+    province: ProminentLocation | null,
 
   }
 }
@@ -26,20 +26,8 @@ const initialState: DiscoveryState = {
   userPosition: "",
   status: 'idle',
   displayContent: {
-    cities: [],
-    province: {
-      admin_name: "",
-      capital: "",
-      city: "",
-      country: "",
-      iso2: "",
-      lat: "",
-      lng: "",
-      population: "",
-      population_proper: "",
-      bg_image: "",
-    },
-
+    cities: null,
+    province: null,
   }
 };
 

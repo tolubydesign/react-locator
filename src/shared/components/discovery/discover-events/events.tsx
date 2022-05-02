@@ -13,6 +13,8 @@ import SearchBar from "../../search-bar/search-bar";
 const Spinner = lazy(() => import("../../../../core/spinner/spinner"));
 
 export default function Events() {
+  // React Router
+  const location: Location = useLocation();
 
   const titleText = (): string => {
     const path: string = location.pathname
