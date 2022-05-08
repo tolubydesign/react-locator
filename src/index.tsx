@@ -15,6 +15,7 @@ import Navi from './shared/components/navigation/navi';
 import { Provider } from 'react-redux';
 import { store } from './core/redux-store/store';
 import { ProvinceRedirect } from './shared/components/discovery/province/province';
+import EventPanel from './shared/components/location-events/event-panel/event-panel';
 
 // Lazy loaded components
 const Discovery = lazy(() => import('./shared/components/discovery/discovery'));
@@ -27,6 +28,7 @@ ReactDOM.render(
     <BrowserRouter>
       <Provider store={store}>
         <Navi />
+        <EventPanel />
 
         <Suspense fallback={<div className='flex justifty-center items-center'>Loading...</div>}>
           <Routes>

@@ -13,7 +13,7 @@ type EventAddress = {
   suburb: string;
 };
 
-export interface Event {
+export interface LocationEvent {
   city: string;
   lat: string;
   lng: string;
@@ -21,10 +21,48 @@ export interface Event {
   admin_name: string; // province
   address: EventAddress;
   information: EventInformation;
-  bg_image: string | null;
+  main_image: string | null;
+  image: string[];
 }
 
-export const Events: any[] = [
+export function attachImages(events: LocationEvent[]): LocationEvent[] {
+  let ev: LocationEvent[] = []
+  
+  events.forEach((location: LocationEvent) => {
+    location.main_image = RandomiseImages();
+    location.image = location.image.map((img: string, i: number) => {
+      return RandomiseImages()
+    })
+    ev.push(location)
+  });
+
+  console.log("FUNCTION:attachImages:ev", ev);
+  return ev
+}
+
+function RandomiseImages(): string {
+  const images = [
+    `${process.env.PUBLIC_URL}/assets/image/random/unsplash-random.jpg`,
+    `${process.env.PUBLIC_URL}/assets/image/random/unsplash-random-1.jpg`,
+    `${process.env.PUBLIC_URL}/assets/image/random/unsplash-random-2.jpg`,
+    `${process.env.PUBLIC_URL}/assets/image/random/unsplash-random-3.jpg`,
+    `${process.env.PUBLIC_URL}/assets/image/random/unsplash-random-4.jpg`,
+    `${process.env.PUBLIC_URL}/assets/image/random/unsplash-random-5.jpg`,
+    `${process.env.PUBLIC_URL}/assets/image/random/unsplash-random-6.jpg`,
+    `${process.env.PUBLIC_URL}/assets/image/random/unsplash-random-7.jpg`,
+    `${process.env.PUBLIC_URL}/assets/image/random/unsplash-random-8.jpg`,
+    `${process.env.PUBLIC_URL}/assets/image/random/unsplash-random-9.jpg`,
+    `${process.env.PUBLIC_URL}/assets/image/random/unsplash-random-10.jpg`,
+    `${process.env.PUBLIC_URL}/assets/image/random/unsplash-random-11.jpg`,
+  ]
+
+  // Get random number
+  const randomIndex = Math.floor(Math.random() * images.length);
+  // Return a random image
+  return images[randomIndex]
+}
+
+export const LocationEvents: LocationEvent[] = [
   {
     city: "Johannesburg",
     lat: "-26.2044",
@@ -41,7 +79,8 @@ export const Events: any[] = [
       event_type: "private",
       event_time: Number(new Date().getTime()) + 3000000000 // adds a 2 months and a few days, give or take
     },
-    bg_image: null,
+    main_image: null,
+    image: ["", "", "", "", ""],
   },
   {
     city: "Vereeniging",
@@ -59,7 +98,8 @@ export const Events: any[] = [
       event_type: "public",
       event_time: Number(new Date().getTime()) + 3000000000 // adds a 2 months and a few days, give or take
     },
-    bg_image: null,
+    main_image: null,
+    image: ["", "", "", "", ""],
   },
   {
     city: "Vereeniging",
@@ -77,7 +117,8 @@ export const Events: any[] = [
       event_type: "public",
       event_time: Number(new Date().getTime()) + 3000000000 // adds a 2 months and a few days, give or take
     },
-    bg_image: null,
+    main_image: null,
+    image: ["", "", "", "", ""],
   },
   {
     city: "Sandton",
@@ -92,10 +133,11 @@ export const Events: any[] = [
     information: {
       title: "Event Title (4)",
       description: "Event Description (4)",
-      event_type: "public",
+      event_type: "private",
       event_time: Number(new Date().getTime()) + 3000000000 // adds a 2 months and a few days, give or take
     },
-    bg_image: null,
+    main_image: null,
+    image: ["", "", "", "", ""],
   },
   {
     city: "Pretoria",
@@ -113,7 +155,8 @@ export const Events: any[] = [
       event_type: "public",
       event_time: Number(new Date().getTime()) + 3000000000 // adds a 2 months and a few days, give or take
     },
-    bg_image: null,
+    main_image: null,
+    image: ["", "", "", "", ""],
   },
   {
     city: "Springs",
@@ -131,6 +174,7 @@ export const Events: any[] = [
       event_type: "public",
       event_time: Number(new Date().getTime()) + 3000000000 // adds a 2 months and a few days, give or take
     },
-    bg_image: null,
+    main_image: null,
+    image: ["", "", "", "", ""],
   },
 ]

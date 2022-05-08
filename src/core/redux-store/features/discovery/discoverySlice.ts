@@ -1,6 +1,7 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState, AppThunk } from '../../store';
-import { fetchProminentLocations } from '../api/locations-api';
+import { fetchEvents, fetchProminentLocations } from '../api/locations-api';
+import { attachImages, LocationEvent } from '../api/mock-data/events';
 import { ProminentLocation } from '../api/mock-data/simplemaps-locations';
 import { GetProvinces } from './discovery-store-helpers';
 
@@ -10,17 +11,20 @@ export interface DiscoveryState {
   search: string;
   userPosition: any;
   provinces: ProminentLocation[];
+  selectedEvent: LocationEvent | null;
+  events: LocationEvent[] | null;
   status: 'idle' | 'complete' | 'loading' | 'failed';
   displayContent: {
-    cities: ProminentLocation[] | null,
-    province: ProminentLocation | null,
-
+    cities: ProminentLocation[] | null;
+    province: ProminentLocation | null;
   }
 }
 
 const initialState: DiscoveryState = {
   completeLocations: [],
   provinces: [],
+  selectedEvent: null,
+  events: null,
   locations: [],
   search: "",
   userPosition: "",
@@ -31,6 +35,10 @@ const initialState: DiscoveryState = {
   }
 };
 
+export const FetchEventsAsync = createAsyncThunk("events/fetch", async () => {
+  const response: string = await fetchEvents();
+  return JSON.parse(response) as LocationEvent[];
+})
 
 export const FetchProminentLocationsAsync = createAsyncThunk("discovery/FetchLocationsAsync", async () => {
   const response: string = await fetchProminentLocations();
@@ -59,6 +67,10 @@ export const discoverySlice = createSlice({
       });
 
       console.log("STATE - reducers{setProvinceCity}", state.displayContent, state.completeLocations, action.payload);
+    },
+    setSelectedEvent: (state: DiscoveryState, action: PayloadAction<LocationEvent | null>) => {
+      console.log("STATE - reducers{setSelectedEvent}", action.payload);
+      state.selectedEvent = action.payload
     }
   },
 
@@ -78,10 +90,22 @@ export const discoverySlice = createSlice({
       .addCase(FetchProminentLocationsAsync.rejected, (state: DiscoveryState) => {
         state.status = 'failed';
       })
+      
+      .addCase(FetchEventsAsync.pending, (state: DiscoveryState) => {
+        state.status = 'loading';
+      })
+      .addCase(FetchEventsAsync.fulfilled, (state: DiscoveryState, action: PayloadAction<LocationEvent[]>) => {
+        
+        state.events = attachImages(action.payload);
+        state.status = 'complete';
+      })
+      .addCase(FetchEventsAsync.rejected, (state: DiscoveryState) => {
+        state.status = 'failed';
+      })
   },
 });
 
-export const { setProvinces, setUserPosition, setSearch, setProvinceCity } = discoverySlice.actions;
+export const { setProvinces, setUserPosition, setSearch, setProvinceCity, setSelectedEvent } = discoverySlice.actions;
 
 export const selectDiscovery = (state: RootState) => (state.discovery) ? state.discovery : initialState;
 export const selectCompleteLocation = (state: RootState) => (state.discovery.completeLocations) ? state.discovery.completeLocations : initialState.completeLocations;
@@ -90,5 +114,7 @@ export const selectLocations = (state: RootState) => (state.discovery.locations)
 export const selectStatus = (state: RootState) => state.discovery.status;
 export const selectDisplayContent = (state: RootState) => state.discovery.displayContent;
 export const selectDisplayCities = (state: RootState) => state.discovery.displayContent.cities;
+export const selectEvents = (state: RootState) => state.discovery.events;
+export const selectedEvent = (state: RootState) => state.discovery.selectedEvent;
 
 export default discoverySlice.reducer;

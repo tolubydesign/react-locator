@@ -1,3 +1,5 @@
+import { resolve } from "dns";
+import { LocationEvents } from "./mock-data/events";
 import { CityLocations } from "./mock-data/locations";
 import { prominentLocations } from "./mock-data/simplemaps-locations";
 
@@ -41,4 +43,13 @@ export async function fetchProminentLocations(): Promise<string> {
       resolve(JSON.stringify(prominentLocations));
     }, 300);
   });
+}
+
+
+export async function fetchEvents(): Promise<string> {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve(JSON.stringify(LocationEvents))
+    }, 500)
+  })
 }
